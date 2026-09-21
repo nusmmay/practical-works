@@ -22,3 +22,21 @@ root
 sync
 sys
 www-data
+```
+
+
+## Задача 2
+Вывести данные /etc/protocols в отформатированном и отсортированном порядке для 5 наибольших портов.
+
+### Команда:
+```bash
+cat /etc/protocols | sort -n -k2 | tail -n 5
+```
+### Результат:
+```text
+manet    138                     # MANET Protocols [RFC5498]
+hip      139       HIP           # Host Identity Protocol
+shim6    140       Shim6         # Shim6 Protocol [RFC5533]
+wesp     141       WESP          # Wrapped Encapsulating Security Payload
+rohc     142       ROHC          # Robust Header Compression
+```
