@@ -1,0 +1,8 @@
+#!/bin/bash
+if [ -z "$1" ]; then
+    echo "Использование: $0 <файл>"
+    exit 1
+fi
+chmod +x "$1"
+cp "$1" /usr/local/bin/
+echo "Файл $1 успешно зарегистрирован в /usr/local/bin/"
