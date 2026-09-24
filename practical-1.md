@@ -210,3 +210,19 @@ Hello\tWorld
 This\tis\ta\ttest
 NoSpacesHere
 ```
+
+
+## Задача 10
+Написать программу, которая выводит названия всех пустых текстовых файлов в указанной директории. Директория передается в программу параметром.
+
+### Код скрипта (файл find_empty):
+```bash
+find "$1" -type f -size 0
+```
+
+### Результат:
+```text
+emptytest/empty1.txt
+emptytest/empty2.log
+emptytest/sub/empty3.txt
+```
