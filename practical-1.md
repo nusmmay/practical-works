@@ -116,3 +116,34 @@ echo "Файл $1 успешно зарегистрирован в /usr/local/bi
 [root@localhost ~]# ls -l /usr/local/bin/banner
 -rwxr-xr-x 1 root root 52 Sep 24 11:31 /usr/local/bin/banner
 ```
+
+
+## Задача 6
+Написать программу для проверки наличия комментария в первой строке файлов с расширением c, js и py.
+
+### Код скрипта (файл check_comment):
+```bash
+#!/bin/bash
+if [ -z "$1" ]; then echo "Использование: $0 <файл>"; exit 1; fi
+filename="$1"
+first_line=$(head -n 1 "$filename")
+case "$filename" in
+  *.c|*.js)
+    if echo "$first_line" | grep -q "^//"; then echo "В файле $filename есть комментарий в первой строке."; else echo "В файле $filename нет комментария в первой строке."; fi
+    ;;
+  *.py)
+    if echo "$first_line" | grep -q "^#"; then echo "В файле $filename есть комментарий в первой строке."; else echo "В файле $filename нет комментария в первой строке."; fi
+    ;;
+  *)
+    echo "Неизвестный тип файла: $filename"
+    ;;
+esac
+```
+
+### Результат:
+```text
+В файле test.c есть комментарий в первой строке.
+В файле test.js есть комментарий в первой строке.
+В файле test.py есть комментарий в первой строке.
+```
+
