@@ -65,3 +65,30 @@ echo "+${LINE}+"
 | Hello from RTU MIREA! |
 +----------------------+
 ```
+
+## Задача 4
+Написать программу для вывода всех идентификаторов (по правилам C/C++ или Java) в файле (без повторений).
+
+### Код скрипта (файл identifiers):
+```bash
+#!/bin/bash
+if [ -z "$1" ]; then
+    echo "Использование: $0 <файл>"
+    exit 1
+fi
+tr -c '[:alnum:]_' '\n' < "$1" | grep -E '^[a-z_][a-z0-9_]*$' | sort -u
+```
+
+### Результат:
+```text
+h
+hello
+include
+int
+main
+n
+printf
+return
+stdio
+world
+```
