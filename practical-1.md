@@ -40,3 +40,28 @@ shim6    140       Shim6         # Shim6 Protocol [RFC5533]
 wesp     141       WESP          # Wrapped Encapsulating Security Payload
 rohc     142       ROHC          # Robust Header Compression
 ```
+
+
+## Задача 3
+Написать программу banner средствами bash для вывода текстов, как в примере (размер баннера должен меняться!).
+
+### Код скрипта (файл banner):
+```bash
+#!/bin/bash
+TEXT="$*"
+if [ -z "$TEXT" ]; then
+    echo "Использование: $0 <текст>"
+    exit 1
+fi
+LEN=${#TEXT}
+LINE=$(printf '%*s' $((LEN + 2)) '' | tr ' ' '-')
+echo "+${LINE}+"
+echo "| ${TEXT} |"
+echo "+${LINE}+"
+```
+### Результат:
+```text
++----------------------+
+| Hello from RTU MIREA! |
++----------------------+
+```
