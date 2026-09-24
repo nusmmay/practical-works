@@ -147,3 +147,19 @@ esac
 В файле test.py есть комментарий в первой строке.
 ```
 
+## Задача 7
+Написать программу для нахождения файлов-дубликатов (имеющих 1 или более копий содержимого) по заданному пути (и подкаталогам).
+
+### Код скрипта (файл find_duplicates):
+```bash
+#!/bin/bash
+if [ -z "$1" ]; then echo "Использование: $0 <директория>"; exit 1; fi
+find "$1" -type f -exec md5sum {} + | sort | awk '{count[$1]++; files[$1]=files[$1]"\n"$0} END {for (h in count) if (count[h]>1) print files[h]}'
+```
+
+### Результат:
+```text
+09f7e02f1290be211da707a266f153b3  testdir/file1.txt
+09f7e02f1290be211da707a266f153b3  testdir/file2.txt
+09f7e02f1290be211da707a266f153b3  testdir/subdir/file4.txt
+```
