@@ -163,3 +163,27 @@ find "$1" -type f -exec md5sum {} + | sort | awk '{count[$1]++; files[$1]=files[
 09f7e02f1290be211da707a266f153b3  testdir/file2.txt
 09f7e02f1290be211da707a266f153b3  testdir/subdir/file4.txt
 ```
+
+## Задача 8
+Написать программу, которая находит все файлы в данном каталоге с расширением, указанным в качестве аргумента, и архивирует все эти файлы в архив tar.
+
+### Код скрипта (файл archive_files):
+```bash
+#!/bin/bash
+if [ -z "$1" ] || [ -z "$2" ]; then echo "Использование: $0 <каталог> <расширение>"; exit 1; fi
+dir="$1"
+ext="$2"
+archive="archive_$(date +%s).tar"
+find "$dir" -type f -name "*$ext" | tar -cvf "$archive" -T -
+echo "Архив $archive создан."
+```
+
+### Результат:
+```text
+testdir/subdir/file3.txt
+testdir/subdir/file4.txt
+testdir/file1.txt
+testdir/file2.txt
+testdir/unique.txt
+Архив archive_1790241374.tar создан.
+```
