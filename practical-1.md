@@ -92,3 +92,27 @@ return
 stdio
 world
 ```
+
+## Задача 5
+Написать программу для регистрации пользовательской команды (правильные права доступа и копирование в /usr/local/bin).
+
+### Код скрипта (файл reg):
+```bash
+#!/bin/bash
+if [ -z "$1" ]; then
+    echo "Использование: $0 <файл>"
+    exit 1
+fi
+chmod +x "$1"
+cp "$1" /usr/local/bin/
+echo "Файл $1 успешно зарегистрирован в /usr/local/bin/"
+```
+
+### Результат:
+```text
+[root@localhost ~]# sh reg banner
+Файл banner успешно зарегистрирован в /usr/local/bin/
+
+[root@localhost ~]# ls -l /usr/local/bin/banner
+-rwxr-xr-x 1 root root 52 Sep 24 11:31 /usr/local/bin/banner
+```
