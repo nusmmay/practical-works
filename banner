@@ -1,0 +1,15 @@
+#!/bin/bash
+
+TEXT="$*"
+
+if [ -z "$TEXT" ]; then
+    echo "Использование: $0 <текст>"
+    exit 1
+fi
+
+LEN=${#TEXT}
+LINE=$(printf '%*s' $((LEN + 2)) '' | tr ' ' '-')
+
+echo "+${LINE}+"
+echo "| ${TEXT} |"
+echo "+${LINE}+"
