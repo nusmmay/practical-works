@@ -59,6 +59,10 @@ echo "+${LINE}+"
 echo "| ${TEXT} |"
 echo "+${LINE}+"
 ```
+### Запуск:
+```bash
+sh banner "Hello from RTU MIREA!"
+```
 ### Результат:
 ```text
 +----------------------+
@@ -77,6 +81,11 @@ if [ -z "$1" ]; then
     exit 1
 fi
 tr -c '[:alnum:]_' '\n' < "$1" | grep -E '^[a-z_][a-z0-9_]*$' | sort -u
+```
+
+### Запуск:
+```bash
+sh identifiers hello.c
 ```
 
 ### Результат:
@@ -106,6 +115,10 @@ fi
 chmod +x "$1"
 cp "$1" /usr/local/bin/
 echo "Файл $1 успешно зарегистрирован в /usr/local/bin/"
+```
+### Запуск:
+```bash
+sh reg banner
 ```
 
 ### Результат:
@@ -139,6 +152,13 @@ case "$filename" in
     ;;
 esac
 ```
+### Запуск:
+```bash
+sh check_comment test.c
+sh check_comment test.js
+sh check_comment test.py
+```
+
 
 ### Результат:
 ```text
@@ -155,6 +175,11 @@ esac
 #!/bin/bash
 if [ -z "$1" ]; then echo "Использование: $0 <директория>"; exit 1; fi
 find "$1" -type f -exec md5sum {} + | sort | awk '{count[$1]++; files[$1]=files[$1]"\n"$0} END {for (h in count) if (count[h]>1) print files[h]}'
+```
+
+### Запуск:
+```bash
+sh find_duplicates testdir
 ```
 
 ### Результат:
@@ -176,6 +201,11 @@ ext="$2"
 archive="archive_$(date +%s).tar"
 find "$dir" -type f -name "*$ext" | tar -cvf "$archive" -T -
 echo "Архив $archive создан."
+```
+
+### Запуск:
+```bash
+sh archive_files testdir .txt
 ```
 
 ### Результат:
@@ -202,6 +232,10 @@ echo "Замена выполнена. Результат в файле $2"
 
 Замена выполнена. Результат в файле output.txt
 
+### Запуск:
+```bash
+sh replace_spaces input.txt output.txt
+```
 
 ### Результат:
 ```text
@@ -218,6 +252,11 @@ NoSpacesHere
 ### Код скрипта (файл find_empty):
 ```bash
 find "$1" -type f -size 0
+```
+
+### Запуск:
+```bash
+sh find_empty emptytest
 ```
 
 ### Результат:
