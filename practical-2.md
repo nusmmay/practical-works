@@ -326,3 +326,156 @@ right = 0
 shared = 0
 target = 2
 ```
+
+## Задача 7
+Представить задачу о зависимостях пакетов в общей форме. Необходимо действовать аналогично реальному менеджеру пакетов: получить описание пакета и его зависимости в виде структуры данных (например, словаря). Систему ограничений нужно построить автоматически по метаданным.
+
+### Идея решения:
+Написать программу на Python, которая:
+1. Хранит описание пакетов и их зависимостей в виде словаря.
+2. Автоматически генерирует код MiniZinc на основе этого словаря.
+3. Сохраняет сгенерированный код в файл `generated.mzn`.
+
+### Код (generate_mzn.py):
+```python
+# Метаданные пакетов: имя -> {версия: [список зависимостей]}
+packages = {
+    "root":   {"1.0.0": ["foo ^1.0.0", "target ^2.0.0"]},
+    "foo":    {"1.1.0": ["left ^1.0.0", "right ^1.0.0"],
+               "1.0.0": []},
+    "left":   {"1.0.0": ["shared >=1.0.0"]},
+    "right":  {"1.0.0": ["shared <2.0.0"]},
+    "shared": {"2.0.0": [],
+               "1.0.0": ["target ^1.0.0"]},
+    "target": {"2.0.0": [],
+               "1.0.0": []},
+}
+
+# Соответствие версий числам (для MiniZinc)
+version_numbers = {
+    "root":   {"1.0.0": 1},
+    "foo":    {"1.0.0": 1, "1.1.0": 2},
+    "left":   {"1.0.0": 1},
+    "right":  {"1.0.0": 1},
+    "shared": {"1.0.0": 1, "2.0.0": 2},
+    "target": {"1.0.0": 1, "2.0.0": 2},
+}
+
+def parse_dep(dep):
+    """Разбирает строку зависимости: 'foo ^1.0.0' -> ('foo', '^', '1.0.0')"""
+    parts = dep.split()
+    name = parts[0]
+    spec = parts[1]
+    if spec.startswith(">="):
+        return name, ">=", spec[2:]
+    elif spec.startswith("<="):
+        return name, "<=", spec[2:]
+    elif spec.startswith("^"):
+        return name, "^", spec[1:]
+    elif spec.startswith(">"):
+        return name, ">", spec[1:]
+    elif spec.startswith("<"):
+        return name, "<", spec[1:]
+    else:
+        return name, "=", spec
+
+def gen_constraint(pkg, ver, dep):
+    """Генерирует строку ограничения MiniZinc для одной зависимости"""
+    name, op, version = parse_dep(dep)
+    v = version_numbers[name][version]
+    pv = version_numbers[pkg][ver]
+
+    if op == "^":
+        max_v = v + 1
+        return f"constraint ({pkg} = {pv}) -> ({name} >= {v} /\\ {name} < {max_v});"
+    elif op == ">=":
+        return f"constraint ({pkg} = {pv}) -> ({name} >= {v});"
+    elif op == "<":
+        return f"constraint ({pkg} = {pv}) -> ({name} < {v});"
+    elif op == "<=":
+        return f"constraint ({pkg} = {pv}) -> ({name} <= {v});"
+    elif op == ">":
+        return f"constraint ({pkg} = {pv}) -> ({name} > {v});"
+    else:
+        return f"constraint ({pkg} = {pv}) -> ({name} = {v});"
+
+# Генерируем код MiniZinc
+lines = []
+lines.append('include "globals.mzn";\n')
+lines.append("% Автоматически сгенерированные ограничения\n")
+
+# Объявления переменных
+for pkg, versions in version_numbers.items():
+    max_v = max(versions.values())
+    lines.append(f"var 0..{max_v}: {pkg};")
+
+lines.append("")
+lines.append("% root всегда установлен")
+lines.append("constraint root = 1;\n")
+
+for pkg, versions in packages.items():
+    for ver, deps in versions.items():
+        for dep in deps:
+            lines.append(gen_constraint(pkg, ver, dep))
+
+lines.append("")
+lines.append("solve satisfy;\n")
+
+# Вывод
+lines.append("output [")
+for pkg in version_numbers:
+    lines.append(f'    "{pkg} = \\({pkg})\\n",')
+lines.append("];")
+
+# Сохраняем в файл
+with open("generated.mzn", "w") as f:
+    f.write("\n".join(lines))
+
+print("Файл generated.mzn создан!")
+```
+
+### Сгенерированный код (generated.mzn):
+```python
+include "globals.mzn";
+
+% Автоматически сгенерированные ограничения
+
+var 0..1: root;
+var 0..2: foo;
+var 0..1: left;
+var 0..1: right;
+var 0..2: shared;
+var 0..2: target;
+
+% root всегда установлен
+constraint root = 1;
+
+constraint (root = 1) -> (foo >= 1 /\ foo < 2);
+constraint (root = 1) -> (target >= 2 /\ target < 3);
+constraint (foo = 2) -> (left >= 1 /\ left < 2);
+constraint (foo = 2) -> (right >= 1 /\ right < 2);
+constraint (left = 1) -> (shared >= 1);
+constraint (right = 1) -> (shared < 2);
+constraint (shared = 1) -> (target >= 1 /\ target < 2);
+
+solve satisfy;
+
+output [
+    "root = \(root)\n",
+    "foo = \(foo)\n",
+    "left = \(left)\n",
+    "right = \(right)\n",
+    "shared = \(shared)\n",
+    "target = \(target)\n",
+];
+```
+
+### Результат:
+```text
+root = 1
+foo = 1
+left = 0
+right = 0
+shared = 0
+target = 2
+```
