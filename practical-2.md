@@ -197,3 +197,56 @@ output [
 Билет: 620-431
 Сумма: 8
 ```
+## Задача 5
+Решить на MiniZinc задачу о зависимостях пакетов для рисунка pubgrub.png.
+
+### Анализ зависимостей:
+- `root` зависит от `menu` и `icons`
+- `menu` версии 1.1.0–1.5.0 зависит от `dropdown`
+- `dropdown` зависит от `icons`
+- `icons` не имеет зависимостей
+
+### Код:
+```minizinc
+include "globals.mzn";
+
+% Версии пакетов (0 = не установлен)
+var 0..1: root;
+var 0..6: menu;      % 1.0.0=1, 1.1.0=2, 1.2.0=3, 1.3.0=4, 1.4.0=5, 1.5.0=6
+var 0..5: dropdown;  % 1.8.0=1, 2.0.0=2, 2.1.0=3, 2.2.0=4, 2.3.0=5
+var 0..2: icons;     % 1.0.0=1, 2.0.0=2
+
+% root всегда установлен
+constraint root = 1;
+
+% root зависит от menu
+constraint menu >= 1;
+
+% root зависит от icons
+constraint icons >= 1;
+
+% menu 1.1.0 - 1.5.0 зависит от dropdown
+constraint (menu >= 2) -> (dropdown >= 1);
+
+% dropdown зависит от icons
+constraint (dropdown >= 1) -> (icons >= 1);
+
+% Если dropdown не нужен, он не установлен
+constraint (menu < 2) -> (dropdown = 0);
+
+solve satisfy;
+
+output [
+    "root = 1.0.0\n",
+    "menu = \(menu)\n",
+    "dropdown = \(dropdown)\n",
+    "icons = \(icons)\n"
+];
+```
+### Результат:
+```text
+root = 1.0.0
+menu = 1
+dropdown = 0
+icons = 1
+```
