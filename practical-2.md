@@ -92,6 +92,71 @@ wget https://registry.npmjs.org/express/-/express-5.2.1.tgz
 tar -xzf express-5.2.1.tgz
 cd package
 ```
+## Задача 3
+Сформировать graphviz-код и получить изображения зависимостей matplotlib и express.
 
+### Код (matplotlib.dot):
+```dot
+digraph matplotlib {
+    rankdir=LR;
+    node [shape=box];
 
+    matplotlib -> contourpy;
+    matplotlib -> cycler;
+    matplotlib -> fonttools;
+    matplotlib -> kiwisolver;
+    matplotlib -> numpy;
+    matplotlib -> packaging;
+    matplotlib -> pillow;
+    matplotlib -> pyparsing;
+    matplotlib -> python_dateutil;
+
+    python_dateutil -> six;
+}
+```
+### Код (express.dot):
+```dot
+digraph express {
+    rankdir=LR;
+    node [shape=box];
+
+    express -> accepts;
+    express -> body_parser;
+    express -> content_type;
+    express -> cookie;
+    express -> debug;
+    express -> depd;
+    express -> encodeurl;
+    express -> escape_html;
+    express -> etag;
+    express -> finalhandler;
+    express -> fresh;
+    express -> http_errors;
+    express -> mime_types;
+    express -> on_finished;
+    express -> once;
+    express -> parseurl;
+    express -> proxy_addr;
+    express -> qs;
+    express -> range_parser;
+    express -> router;
+    express -> send;
+    express -> statuses;
+    express -> type_is;
+    express -> vary;
+}
+```
+### Генерация изображений:
+```bash
+dot -Tpng matplotlib.dot -o matplotlib.png
+dot -Tpng express.dot -o express.png
+```
+### Просмотр изображений:
+```bash
+open matplotlib.png
+open express.png
+```
+### Результат:
+https://matplotlib.png/
+https://express.png/
 
