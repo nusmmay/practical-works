@@ -250,3 +250,79 @@ menu = 1
 dropdown = 0
 icons = 1
 ```
+
+## Задача 6
+
+Решить на MiniZinc задачу о зависимостях пакетов для следующих данных:
+```text
+root 1.0.0 зависит от foo ^1.0.0 и target ^2.0.0.
+foo 1.1.0 зависит от left ^1.0.0 и right ^1.0.0.
+foo 1.0.0 не имеет зависимостей.
+left 1.0.0 зависит от shared >=1.0.0.
+right 1.0.0 зависит от shared <2.0.0.
+shared 2.0.0 не имеет зависимостей.
+shared 1.0.0 зависит от target ^1.0.0.
+target 2.0.0 и 1.0.0 не имеют зависимостей.
+```
+
+
+### Код:
+```minizinc
+include "globals.mzn";
+
+% Версии пакетов (0 = не установлен)
+var 0..1: root;      % 1.0.0 = 1
+var 0..2: foo;       % 1.0.0 = 1, 1.1.0 = 2
+var 0..1: left;      % 1.0.0 = 1
+var 0..1: right;     % 1.0.0 = 1
+var 0..2: shared;    % 1.0.0 = 1, 2.0.0 = 2
+var 0..2: target;    % 1.0.0 = 1, 2.0.0 = 2
+
+% root всегда установлен
+constraint root = 1;
+
+% root зависит от foo ^1.0.0 (foo = 1 или 2)
+constraint foo >= 1;
+
+% root зависит от target ^2.0.0 (target = 2)
+constraint target = 2;
+
+% foo 1.1.0 (=2) зависит от left и right
+constraint (foo = 2) -> (left = 1);
+constraint (foo = 2) -> (right = 1);
+
+% left зависит от shared >= 1.0.0
+constraint (left = 1) -> (shared >= 1);
+
+% right зависит от shared < 2.0.0
+constraint (right = 1) -> (shared < 2);
+
+% shared 1.0.0 зависит от target ^1.0.0
+constraint (shared = 1) -> (target = 1);
+
+% Если foo 1.0.0, то left, right, shared не нужны
+constraint (foo = 1) -> (left = 0);
+constraint (foo = 1) -> (right = 0);
+constraint (foo = 1) -> (shared = 0);
+
+solve satisfy;
+
+output [
+    "root = 1.0.0\n",
+    "foo = \(foo)\n",
+    "left = \(left)\n",
+    "right = \(right)\n",
+    "shared = \(shared)\n",
+    "target = \(target)\n"
+];
+```
+
+### Результат:
+```text
+root = 1.0.0
+foo = 1
+left = 0
+right = 0
+shared = 0
+target = 2
+```
