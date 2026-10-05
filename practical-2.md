@@ -35,3 +35,63 @@ pip3 install matplotlib-3.11.2-cp313-cp313-macosx_11_0_arm64.whl
 ```bash
 python3 setup.py install
 ```
+
+
+## Задача 2
+Вывести служебную информацию о пакете express (JavaScript). Разобрать основные элементы содержимого файла со служебной информацией из пакета. Как получить пакет без менеджера пакетов, прямо из репозитория?
+
+### Команда:
+```bash
+npm view express
+```
+### Результат:
+```bash
+express@5.2.1 | MIT | deps: 28 | versions: 289
+Fast, unopinionated, minimalist web framework
+https://expressjs.com/
+
+keywords: express, framework, sinatra, web, http, rest, restful, router, app, api
+
+dist
+.tarball: https://registry.npmjs.org/express/-/express-5.2.1.tgz
+.shasum: 8f21d15b6d327f92b4794ecf8cb08a72f956ac04
+.integrity: sha512-hIS4idWWai69NezIdRt2xFVofaF4j+6INOpJlVOLDO8zXGpUVEVzIYk12UUi2JzjEzWL3IOAxcTubgz9Po0yXw==
+.unpackedSize: 75.4 kB
+
+dependencies:
+accepts: ^2.0.0      etag: ^1.8.1         proxy-addr: ^2.0.7
+body-parser: ^2.2.1  finalhandler: ^2.1.0 qs: ^6.14.0
+content-type: ^1.0.5 fresh: ^2.0.0        range-parser: ^1.2.1
+cookie: ^0.7.1       http-errors: ^2.0.0  router: ^2.2.0
+debug: ^4.4.0        mime-types: ^3.0.0   send: ^1.1.0
+depd: ^2.0.0         on-finished: ^2.4.1  statuses: ^2.0.1
+encodeurl: ^2.0.0    once: ^1.4.0         type-is: ^2.0.1
+escape-html: ^1.0.3  parseurl: ^1.3.3     vary: ^1.1.2
+
+maintainers:
+- wesleytodd <wes@wesleytodd.com>
+- jonchurch <npm@jonchurch.com>
+- ctcpip <c@labsector.com>
+- ulisesgascon <ulisesgascondev@gmail.com>
+- sheplu <jean.burellier@gmail.com>
+
+dist-tags:
+latest-4: 4.22.3  latest: 5.2.1
+```
+
+### Как получить пакет без менеджера пакетов:
+
+Зайти на сайт npm (https://www.npmjs.com/package/express), перейти на вкладку Code или сразу скачать .tgz-архив по прямой ссылке из поля .tarball:
+
+```bash
+wget https://registry.npmjs.org/express/-/express-5.2.1.tgz
+```
+Затем распаковать и использовать:
+
+```bash
+tar -xzf express-5.2.1.tgz
+cd package
+```
+
+
+
